@@ -1,0 +1,15 @@
+visualizer\Graph$1.class
+visualizer\MainFrame.class
+algorithms\PrimsAlgorithm.class
+visualizer\Edge.class
+visualizer\Graph.class
+algorithms\DijkstrasAlgorithm.class
+algorithms\PrimsAlgorithm$ChildEdgesInAlphabeticalOrder.class
+algorithms\BFSAlgorithm.class
+algorithms\DFSAlgorithm.class
+visualizer\GraphVisualizer.class
+visualizer\Vertex.class
+visualizer\Mode.class
+algorithms\AlgorithmSetter.class
+algorithms\GraphAlgorithm.class
+visualizer\Algorithm.class
