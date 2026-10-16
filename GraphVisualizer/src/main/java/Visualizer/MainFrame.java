@@ -8,23 +8,23 @@ public class MainFrame extends JFrame {
     protected static final int HEIGHT = 600;
     protected static final Color BACKGROUND_COLOR = Color.black;
     private JLabel modeLabel;
-    private static final JLabel algorithmDisplayLabel;
     private Graph graphPanel;
+    private static final String PROMPT = "Please choose a starting vertex";
+    private static final JTextArea resultsArea = new JTextArea(5, 40);
+    private static final JScrollPane resultsPane = new JScrollPane(resultsArea);
     protected static Mode mode = Mode.ADD_A_VERTEX;
     protected static Algorithm algorithm = null;
-
+    
     static {
-        algorithmDisplayLabel = new JLabel();
-        algorithmDisplayLabel.setName("Display");
-        algorithmDisplayLabel.setText("Please choose a starting vertex");
-        algorithmDisplayLabel.setForeground(MainFrame.BACKGROUND_COLOR);
-        algorithmDisplayLabel.setBackground(Color.white);
-        algorithmDisplayLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        algorithmDisplayLabel.setVerticalAlignment(SwingConstants.CENTER);
-        algorithmDisplayLabel.setLayout(new FlowLayout(FlowLayout.TRAILING));
-        algorithmDisplayLabel.setVisible(false);
+        resultsArea.setName("Display");
+        resultsArea.setEditable(false);
+        resultsArea.setLineWrap(true);
+        resultsArea.setWrapStyleWord(true);
+        resultsArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        resultsArea.setMargin(new Insets(6, 10, 6, 10));
+        resultsArea.setText(PROMPT);
+        resultsPane.setVisible(false);
     }
-
 
     public MainFrame() {
         super("Graph-Algorithms Visualizer");
@@ -34,7 +34,7 @@ public class MainFrame extends JFrame {
         setResizable(false);
 
         setModeJLabel();
-        this.add(algorithmDisplayLabel, BorderLayout.SOUTH);
+        this.add(resultsPane, BorderLayout.SOUTH);
         setJMenu();
 
         add(this.graphPanel = new Graph(), BorderLayout.CENTER);
@@ -59,24 +59,16 @@ public class MainFrame extends JFrame {
         // Creating the menu "Algorithms"
         JMenu algorithmsMenu = new JMenu("Algorithms");
         menuBar.add(algorithmsMenu);
-
-        // Creating the five menu items for "Mode"
-        JMenuItem addAVertex = new JMenuItem("Add a Vertex");
-        addAVertex.setName("Add a Vertex");
-        JMenuItem addAnEdge = new JMenuItem("Add an Edge");
-        addAnEdge.setName("Add an Edge");
-        JMenuItem none = new JMenuItem("None");
-        none.setName("None");
-        JMenuItem removeAVertex = new JMenuItem("Remove a Vertex");
-        removeAVertex.setName("Remove a Vertex");
-        JMenuItem removeAnEdge = new JMenuItem("Remove an Edge");
-        removeAnEdge.setName("Remove an Edge");
-
-        modeMenu.add(addAVertex);
-        modeMenu.add(addAnEdge);
-        modeMenu.add(removeAVertex);
-        modeMenu.add(removeAnEdge);
-        modeMenu.add(none);
+        
+        // Create the menu items for "Mode" in the order they should appear
+        Mode[] menuOrder = {Mode.ADD_A_VERTEX, Mode.ADD_AN_EDGE,
+            Mode.REMOVE_A_VERTEX, Mode.REMOVE_AN_EDGE, Mode.NONE};
+        for (Mode m : menuOrder) {
+            JMenuItem item = new JMenuItem(m.getDescription());
+            item.setName(m.getDescription());
+            item.addActionListener(e -> setMode(m));
+            modeMenu.add(item);
+        }
 
         // Creating the two menu items for "File"
         JMenuItem newReset = new JMenuItem("New");
@@ -102,122 +94,47 @@ public class MainFrame extends JFrame {
         algorithmsMenu.add(Dijkstras);
         algorithmsMenu.add(Prims);
 
-        // Add event listeners to the five menu items of "Mode"
-        addAVertex.addActionListener(e -> {
-            // Change the mode
-            mode = Mode.ADD_A_VERTEX;
-            // Change text for label
-            changeTextForModeLabel("Current Mode -> " + mode.getDescription());
-            // Remove response to previous vertex clicks
-            Graph.edgeVertices.clear();
-            // Switch algorithmDisplayLabel visibility to false and text
-            algorithmDisplayLabel.setVisible(false);
-            algorithmDisplayLabel.setText("Please choose a starting vertex");
-        });
-        addAnEdge.addActionListener(e -> {
-            // Change the mode
-            mode = Mode.ADD_AN_EDGE;
-            // Change text for label
-            changeTextForModeLabel("Current Mode -> " + mode.getDescription());
-            // Switch algorithmDisplayLabel visibility to false and text
-            algorithmDisplayLabel.setVisible(false);
-            algorithmDisplayLabel.setText("Please choose a starting vertex");
-        });
-        none.addActionListener(e -> {
-            // Change the mode
-            mode = Mode.NONE;
-            // Change text for label
-            changeTextForModeLabel("Current Mode -> " + mode.getDescription());
-            // Remove response to previous vertex clicks
-            Graph.edgeVertices.clear();
-            // Switch algorithmDisplayLabel visibility to false and text
-            algorithmDisplayLabel.setVisible(false);
-            algorithmDisplayLabel.setText("Please choose a starting vertex");
-        });
-        removeAVertex.addActionListener(e -> {
-            // Change the mode
-            mode = Mode.REMOVE_A_VERTEX;
-            // Change text for label
-            changeTextForModeLabel("Current Mode -> " + mode.getDescription());
-            // Remove response to previous vertex clicks
-            Graph.edgeVertices.clear();
-            // Switch algorithmDisplayLabel visibility to false and text
-            algorithmDisplayLabel.setVisible(false);
-            algorithmDisplayLabel.setText("Please choose a starting vertex");
-        });
-        removeAnEdge.addActionListener(e -> {
-            // Change the mode
-            mode = Mode.REMOVE_AN_EDGE;
-            // Change text for label
-            changeTextForModeLabel("Current Mode -> " + mode.getDescription());
-            // Remove response to previous vertex clicks
-            Graph.edgeVertices.clear();
-            // Switch algorithmDisplayLabel visibility to false and text
-            algorithmDisplayLabel.setVisible(false);
-            algorithmDisplayLabel.setText("Please choose a starting vertex");
-        });
-
         // Add event listeners to the two menu items of "File"
         newReset.addActionListener(e -> {
             this.remove(this.graphPanel);
             this.repaint();
             this.revalidate();
             this.add(this.graphPanel = new Graph());
-
-            // Clear all the static containers
-            Edge.edges.clear();
-            Vertex.vertices.clear();
-            Graph.edgeVertices.clear();
-            Graph.availableEdges.clear();
-
-            // Change the mode
-            mode = Mode.ADD_A_VERTEX;
-            // Change text for label
-            changeTextForModeLabel("Current Mode -> " + mode.getDescription());
-            // Switch algorithmDisplayLabel visibility to false and text
-            algorithmDisplayLabel.setVisible(false);
-            algorithmDisplayLabel.setText("Please choose a starting vertex");
-
+        // Clear all the static containers
+        Edge.edges.clear();
+        Vertex.vertices.clear();
+        Graph.availableEdges.clear();
+        setMode(Mode.ADD_A_VERTEX);
         });
+        
         exit.addActionListener(e -> {
             this.dispose();
         });
 
         // Add event listeners to the four menu items of "Algorithms"
-        DFS.addActionListener(e -> {
-            none.doClick();
-            // Switch algorithmDisplayLabel visibility to true
-            algorithmDisplayLabel.setVisible(true);
-            // Change the algorithm
-            algorithm = Algorithm.DFS;
-        });
-        BFS.addActionListener(e -> {
-            none.doClick();
-            // Switch algorithmDisplayLabel visibility to true
-            algorithmDisplayLabel.setVisible(true);
-            // Change the algorithm
-            algorithm = Algorithm.BFS;
-        });
-        Dijkstras.addActionListener(e -> {
-            none.doClick();
-            // Switch algorithmDisplayLabel visibility to true
-            algorithmDisplayLabel.setVisible(true);
-            // Change the algorithm
-            algorithm = Algorithm.DIJKSTRAS;
-        });
-        Prims.addActionListener(e -> {
-            none.doClick();
-            // Switch algorithmDisplayLabel visibility to true
-            algorithmDisplayLabel.setVisible(true);
-            // Change the algorithm
-            algorithm = Algorithm.PRIMS;
-        });
+        DFS.addActionListener(e -> selectAlgorithm(Algorithm.DFS));
+        BFS.addActionListener(e -> selectAlgorithm(Algorithm.BFS));
+        Dijkstras.addActionListener(e -> selectAlgorithm(Algorithm.DIJKSTRAS));
+        Prims.addActionListener(e -> selectAlgorithm(Algorithm.PRIMS));
     }
 
     private void changeTextForModeLabel(String newText) {
         this.modeLabel.setText(newText);
         modeLabel.setSize(modeLabel.getPreferredSize());
         this.modeLabel.setLocation(MainFrame.WIDTH - modeLabel.getWidth() - 20, 0);
+    }
+    private void setMode(Mode newMode) {
+        mode = newMode;
+        changeTextForModeLabel("Current Mode -> " + mode.getDescription());
+        Graph.edgeVertices.clear();
+        resultsPane.setVisible(false);
+        resultsArea.setText(PROMPT);
+    }
+    
+    private void selectAlgorithm(Algorithm chosen) {
+        setMode(Mode.NONE);
+        resultsPane.setVisible(true);
+        algorithm = chosen;
     }
 
     private void setModeJLabel() {
@@ -233,8 +150,30 @@ public class MainFrame extends JFrame {
 
     }
 
-    public static JLabel getAlgorithmDisplayLabel() {
-        return algorithmDisplayLabel;
+    public static boolean isResultsVisible() {
+        return resultsPane.isVisible();
     }
-
+    
+    public static void setResultsText(String text) {
+        resultsArea.setText(text);
+        resultsArea.setCaretPosition(0);   // scroll back to the top
+    }
+    
+    protected static String formatResult(Algorithm alg, Vertex start, String raw) {
+        String id = start.getId();
+        return switch (alg) {
+            case BFS -> "Breadth-first visit order from " + id + ":\n"
+                + raw.replaceFirst("^BFS : ", "");
+            case DFS -> "Depth-first visit order from " + id + ":\n"
+                + raw.replaceFirst("^DFS : ", "");
+            case DIJKSTRAS -> "Shortest distances from " + id + ":\n"
+                + raw.replace(", ", "\n").replace("=", " = ")
+                     .replace("Infinity", "unreachable");
+            case PRIMS -> raw.contains("=")
+                ? "Minimum spanning tree from " + id + " (child = parent):\n"
+                    + raw.replace(", ", "\n").replace("=", " = ")
+                : "Vertex " + id + " has no edges, so the tree is just " + raw;
+        };
+    }   
+    
 }

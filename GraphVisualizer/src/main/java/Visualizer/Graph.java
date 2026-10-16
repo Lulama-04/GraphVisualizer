@@ -143,34 +143,28 @@ public class Graph extends JPanel implements MouseListener {
 
                     this.repaint();
                 }
-        } else if (MainFrame.mode == Mode.NONE && MainFrame.getAlgorithmDisplayLabel().isVisible()) {
-            // Check if a vertex was clicked
+        } else if (MainFrame.mode == Mode.NONE && MainFrame.isResultsVisible()) {
             Vertex vertex = clickedOnVertex(e.getX(), e.getY());
-
+            
             if (vertex != null) {
                 AlgorithmSetter algorithmSetter = new AlgorithmSetter();
                 algorithmSetter.setAlgorithm(MainFrame.algorithm.getAlgorithmInstance());
-
-                // Create the graph data structure
+                
                 Map<Vertex, List<Edge>> graph = createGraphDataStructure();
 
-                // Run the algorithm
                 String path = algorithmSetter.execute(graph, vertex);
+                String result = MainFrame.formatResult(MainFrame.algorithm, vertex, path);
 
-                // Display the message that the Algorithm is running
-                MainFrame.getAlgorithmDisplayLabel().setText("Please wait...");
+                MainFrame.setResultsText("Please wait...");
 
-                // Timer (with the interval of 1 sec)
                 Timer timer = new Timer(1000, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
-                        // Change display label to <path>
-                        MainFrame.getAlgorithmDisplayLabel().setText(path);
+                        MainFrame.setResultsText(result);
                     }
                 });
                 timer.setRepeats(false);
                 timer.start();
-
             }
         }
     }
