@@ -9,28 +9,11 @@ public class DFSAlgorithm implements GraphAlgorithm {
 
     @Override
     public String run(Map<Vertex, List<Edge>> graph, Vertex start) {
-
-        // If the chosen vertex doesn't have any edges, then just return it
-        if (graph.get(start).isEmpty()) {
-            return "DFS -> " + start.getId();
-        }
-
-        // Initialize the string that will contain the traversal
-        String traversalPath = "DFS : ";
-
         // Initialize a set to keep track of visited Vertices
         Set<Vertex> visited = new HashSet<>();
-
-        // Call helper on Start Vertex
-        traversalPath += helper(graph, start, visited);
-
-        // Iterate through all other nodes in the graph
-        for (Vertex vertex: graph.keySet()) {
-            if (!visited.contains(vertex) && !graph.get(vertex).isEmpty()) {
-                traversalPath += helper(graph, vertex, visited);
-            }
-        }
-
+        // Initialize the string that will contain the traversal
+        String traversalPath = "DFS : " + helper(graph, start, visited);
+        // If the chosen vertex doesn't have any edges, then just return it
         return traversalPath.substring(0, traversalPath.length() - 4);
     }
 
