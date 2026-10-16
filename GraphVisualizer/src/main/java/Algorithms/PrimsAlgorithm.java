@@ -18,7 +18,7 @@ public class PrimsAlgorithm implements GraphAlgorithm {
         List<Edge> edgesOfMST = new ArrayList<>();
 
         // Initialize a set that will store the vertices belonging to the MST and add the start Vertex to it
-        Set<Vertex> verticesOfMST = new HashSet<>();
+        Set<Vertex> verticesOfMST = new TreeSet<>();
         verticesOfMST.add(start);
 
         // Find all directly and indirectly connected vertices of the Start Vertex

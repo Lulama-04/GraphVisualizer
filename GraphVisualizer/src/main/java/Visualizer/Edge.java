@@ -109,12 +109,7 @@ public class Edge extends JComponent implements Comparable<Edge> {
 
     @Override
     public int hashCode() {
-        int result = 17;
-
-        result = 31 * result + vertex1.hashCode();
-        result = 31 * result + vertex2.hashCode();
-
-        return result;
+        return vertex1.hashCode() +  vertex2.hashCode();
     }
 
     @Override
