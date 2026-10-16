@@ -65,12 +65,7 @@ public class Graph extends JPanel implements MouseListener {
                     Vertex vertex1 = edgeVertices.get(0);
                     Vertex vertex2 = edgeVertices.get(1);
                     edgeVertices.clear();
-
-                    List<String> newIdCouple = new ArrayList<>();
-                    newIdCouple.add(vertex1.getId());
-                    newIdCouple.add(vertex2.getId());
-                    availableEdges.add(newIdCouple);
-
+                    
                     drawEdge(vertex1, vertex2);
                 }
             }
@@ -222,7 +217,7 @@ public class Graph extends JPanel implements MouseListener {
                     (double) x2, (double) y2,
                     (double) x, (double) y);
 
-            if (dist < 5) return edge;
+            if (dist < 25) return edge;
 
         }
 
@@ -272,6 +267,7 @@ public class Graph extends JPanel implements MouseListener {
                 break;
             } else {
                 if (input.matches("(-?[1-9]\\d*|0)")) {
+                    availableEdges.add(List.of(vertex1.getId(), vertex2.getId()));
                     Edge edge1 = new Edge(vertex1, vertex2, Integer.valueOf(input));
                     Edge edge2 = new Edge(vertex2, vertex1, Integer.valueOf(input));
 
@@ -281,6 +277,10 @@ public class Graph extends JPanel implements MouseListener {
 
                     this.repaint();
                     return;
+                } else{
+                    JOptionPane.showMessageDialog(this,
+                    "Weight must be a whole number from 0 to 999999.", 
+                    "Invalid weight", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

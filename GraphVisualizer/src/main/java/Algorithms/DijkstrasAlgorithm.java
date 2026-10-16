@@ -10,7 +10,7 @@ public class DijkstrasAlgorithm implements GraphAlgorithm {
 
         // Initialize the map that will store the Vertex: Weight pairs
         Map<Vertex, Double> outputMap = new TreeMap<>();
-
+        outputMap.put(start,0.0);
         // Initialize distances with infinity for all vertices except the source
         Map<Vertex, Double> distances = new HashMap<>();
         for (Vertex vertex: graph.keySet()) {
